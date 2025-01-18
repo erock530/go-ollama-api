@@ -210,8 +210,22 @@ The project includes comprehensive test coverage for the API endpoints and middl
 ### Running Tests
 
 ```bash
+# Run all tests
 go test ./... -v
+
+# Run tests with race detection and coverage
+go test -race -coverprofile=coverage.out -covermode=atomic ./...
 ```
+
+### Continuous Integration
+
+The project uses GitHub Actions for continuous integration:
+- Runs tests on every push and pull request to main branch
+- Includes race condition detection
+- Generates and uploads test coverage reports to Codecov
+- Tests run on Ubuntu with Go 1.21 and SQLite dependencies
+
+You can view the latest test results and coverage reports in the GitHub Actions tab.
 
 ### Test Coverage
 
