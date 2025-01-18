@@ -9,10 +9,21 @@ import (
 	_ "github.com/mattn/go-sqlite3"
 )
 
+// DBInterface defines the interface for database operations
+type DBInterface interface {
+	GetAPIKey(key string) (*models.APIKey, error)
+	UpdateAPIKeyUsage(key string, tokens int) error
+	LogAPIUsage(key string) error
+	Close() error
+}
+
 // DB wraps the SQL database connection
 type DB struct {
 	*sql.DB
 }
+
+// Ensure DB implements DBInterface
+var _ DBInterface = (*DB)(nil)
 
 // InitDB initializes the database connection and creates tables
 func InitDB() (*DB, error) {

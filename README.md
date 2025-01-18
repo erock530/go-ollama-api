@@ -16,7 +16,36 @@ A Go-based API proxy for Ollama with API key management, rate limiting, and webh
 go get github.com/erock530/go-ollama-api
 ```
 
-## Building from Source
+## Building and Running
+
+### Using Make
+
+The project includes a Makefile with common commands:
+
+```bash
+# Build the application
+make build
+
+# Run tests
+make test
+
+# Run tests with coverage
+make test-coverage
+
+# Format code
+make fmt
+
+# Run linter
+make lint
+
+# Clean build files
+make clean
+
+# Build and run
+make run
+```
+
+### Building from Source
 
 ```bash
 git clone https://github.com/erock530/go-ollama-api.git
@@ -24,12 +53,34 @@ cd go-ollama-api
 go build ./cmd/server
 ```
 
+### Using Docker
+
+Build and run using Docker:
+
+```bash
+# Build Docker image
+make docker-build
+
+# Run Docker container
+make docker-run
+
+# Or manually:
+docker build -t go-ollama-api .
+docker run -p 8080:8080 go-ollama-api
+```
+
+Note: When running in Docker, the container expects Ollama to be running on the host machine at `http://host.docker.internal:11434`. You can override this by setting the `OLLAMA_URL` environment variable.
+
 ## Usage
 
 Start the server:
 
 ```bash
+# Using binary
 ./server -port 8080 -ollama-url http://127.0.0.1:11434
+
+# Using make
+make run
 ```
 
 ### Command Line Arguments
@@ -151,6 +202,37 @@ Common HTTP status codes:
 - 403: Forbidden (invalid API key, deactivated key)
 - 429: Too Many Requests (rate limit exceeded)
 - 500: Internal Server Error
+
+## Testing
+
+The project includes comprehensive test coverage for the API endpoints and middleware:
+
+### Running Tests
+
+```bash
+go test ./... -v
+```
+
+### Test Coverage
+
+The test suite includes:
+
+- Health Check Endpoint Tests
+  - Valid API key validation
+  - Missing API key handling
+  - Invalid API key responses
+
+- Rate Limiting Tests
+  - Requests within rate limit
+  - Rate limit exceeded scenarios
+  - Inactive API key handling
+
+- Mock Implementations
+  - Database mocking via DBInterface
+  - Ollama API response mocking
+  - Rate limit state management
+
+Each test ensures proper error handling, response codes, and payload validation.
 
 ## License
 

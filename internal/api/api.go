@@ -29,7 +29,7 @@ type RateLimitInfo struct {
 }
 
 // SetupRoutes configures the API routes
-func SetupRoutes(r *mux.Router, db *db.DB, cfg *config.Config) {
+func SetupRoutes(r *mux.Router, db db.DBInterface, cfg *config.Config) {
 	r.Use(func(next http.Handler) http.Handler {
 		return rateLimitMiddleware(next, db)
 	})
@@ -39,7 +39,7 @@ func SetupRoutes(r *mux.Router, db *db.DB, cfg *config.Config) {
 }
 
 // rateLimitMiddleware handles API key validation and rate limiting
-func rateLimitMiddleware(next http.Handler, db *db.DB) http.Handler {
+func rateLimitMiddleware(next http.Handler, db db.DBInterface) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		// Skip rate limiting for health check endpoint
 		if r.URL.Path == "/health" {
@@ -112,7 +112,7 @@ func rateLimitMiddleware(next http.Handler, db *db.DB) http.Handler {
 }
 
 // healthCheckHandler handles the health check endpoint
-func healthCheckHandler(db *db.DB) http.HandlerFunc {
+func healthCheckHandler(db db.DBInterface) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		apiKey := r.URL.Query().Get("apikey")
 		if apiKey == "" {
@@ -142,7 +142,7 @@ func healthCheckHandler(db *db.DB) http.HandlerFunc {
 }
 
 // generateHandler handles the generate endpoint that proxies to Ollama
-func generateHandler(db *db.DB, cfg *config.Config) http.HandlerFunc {
+func generateHandler(db db.DBInterface, cfg *config.Config) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		var req models.GenerateRequest
 		if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
