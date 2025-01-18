@@ -1,1 +1,157 @@
-# go-ollama-api
+# Go Ollama API
+
+A Go-based API proxy for Ollama with API key management, rate limiting, and webhook support.
+
+## Features
+
+- API key management with rate limiting
+- SQLite database for persistent storage
+- Webhook notifications for API usage
+- Interactive CLI for administration
+- Graceful shutdown handling
+
+## Installation
+
+```bash
+go get github.com/erock530/go-ollama-api
+```
+
+## Building from Source
+
+```bash
+git clone https://github.com/erock530/go-ollama-api.git
+cd go-ollama-api
+go build ./cmd/server
+```
+
+## Usage
+
+Start the server:
+
+```bash
+./server -port 8080 -ollama-url http://127.0.0.1:11434
+```
+
+### Command Line Arguments
+
+- `-port`: Port to run the server on (default: 8080)
+- `-ollama-url`: URL of the Ollama server (default: http://127.0.0.1:11434)
+
+## CLI Commands
+
+The interactive CLI starts automatically with the server. Available commands:
+
+| Command | Description | Example |
+|---------|-------------|---------|
+| `generatekey` | Generate a single API key | `generatekey` |
+| `generatekeys <count>` | Generate multiple API keys | `generatekeys 5` |
+| `listkeys` | List all API keys | `listkeys` |
+| `removekey <key>` | Remove an API key | `removekey abc123` |
+| `addwebhook <url>` | Add a webhook URL | `addwebhook http://example.com/webhook` |
+| `deletewebhook <id>` | Delete a webhook | `deletewebhook 1` |
+| `listwebhooks` | List all webhooks | `listwebhooks` |
+| `help` | Show available commands | `help` |
+| `exit` | Exit the program | `exit` |
+
+## API Endpoints
+
+### Health Check
+
+```http
+GET /health?apikey=<your-api-key>
+```
+
+Response:
+```json
+{
+    "status": "API is healthy",
+    "timestamp": "2024-02-20T10:00:00Z"
+}
+```
+
+### Generate Text
+
+```http
+POST /generate
+Content-Type: application/json
+
+{
+    "apikey": "your-api-key",
+    "model": "llama2",
+    "prompt": "Hello, how are you?",
+    "stream": false,
+    "images": [],
+    "raw": false
+}
+```
+
+Response: Proxied response from Ollama server
+
+## Rate Limiting
+
+- Each API key has a configurable rate limit (default: 10 requests per minute)
+- Rate limits are tracked per key and reset every minute
+- When rate limit is exceeded, the API returns a 429 (Too Many Requests) status code
+
+## Webhooks
+
+Webhooks are called for each API request with the following payload:
+
+```json
+{
+    "apikey": "key-used",
+    "prompt": "user-prompt",
+    "model": "model-name",
+    "stream": false,
+    "images": [],
+    "raw": false,
+    "timestamp": "2024-02-20T10:00:00Z"
+}
+```
+
+## Database Schema
+
+The SQLite database (apiKeys.db) contains the following tables:
+
+### apiKeys
+```sql
+CREATE TABLE apiKeys (
+    key TEXT PRIMARY KEY,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    last_used TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    tokens INTEGER DEFAULT 10,
+    rate_limit INTEGER DEFAULT 10,
+    active INTEGER DEFAULT 1,
+    description TEXT
+)
+```
+
+### apiUsage
+```sql
+CREATE TABLE apiUsage (
+    key TEXT,
+    timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+)
+```
+
+### webhooks
+```sql
+CREATE TABLE webhooks (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    url TEXT NOT NULL
+)
+```
+
+## Error Handling
+
+Common HTTP status codes:
+
+- 200: Success
+- 400: Bad Request (missing API key, invalid request body)
+- 403: Forbidden (invalid API key, deactivated key)
+- 429: Too Many Requests (rate limit exceeded)
+- 500: Internal Server Error
+
+## License
+
+This project is licensed under the MIT License - see the LICENSE file for details.
