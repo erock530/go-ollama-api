@@ -1,4 +1,4 @@
-# Go Ollama API
+# Go Ollama API v1.0.0
 
 A Go-based API proxy for Ollama with API key management, rate limiting, and webhook support.
 
