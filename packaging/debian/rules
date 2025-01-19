@@ -1,0 +1,14 @@
+#!/usr/bin/make -f
+%:
+	dh $@
+
+override_dh_auto_build:
+	go build -ldflags="-X main.Version=$(VERSION) -X main.CommitHash=$(COMMIT_HASH) -X main.BuildTime=$(BUILD_TIME)" -o go-ollama-api ./cmd/server
+
+override_dh_auto_install:
+	install -D -m 0755 go-ollama-api debian/go-ollama-api/usr/bin/go-ollama-api
+	install -D -m 0644 packaging/systemd/go-ollama-api.service debian/go-ollama-api/lib/systemd/system/go-ollama-api.service
+	install -d debian/go-ollama-api/etc/go-ollama-api
+
+override_dh_auto_test:
+	go test -v ./...

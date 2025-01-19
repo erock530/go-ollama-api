@@ -1,0 +1,28 @@
+Source: go-ollama-api
+Section: net
+Priority: optional
+Maintainer: Eric <erock530@github.com>
+Build-Depends: debhelper-compat (= 12),
+               golang-1.21,
+               libsqlite3-dev
+Standards-Version: 4.5.0
+Homepage: https://github.com/erock530/go-ollama-api
+Rules-Requires-Root: no
+
+Package: go-ollama-api
+Architecture: any
+Depends: ${shlibs:Depends},
+         ${misc:Depends},
+         sqlite3
+Description: Go-based API proxy for Ollama with key management
+ A Go-based API proxy for Ollama that provides API key management,
+ rate limiting, and webhook support. The service includes features
+ for managing API access, monitoring usage, and integrating with
+ external services through webhooks.
+ .
+ Features:
+  * API key management with configurable rate limiting
+  * SQLite database for persistent storage
+  * Webhook notifications for API usage tracking
+  * Interactive CLI for administration
+  * Graceful shutdown handling

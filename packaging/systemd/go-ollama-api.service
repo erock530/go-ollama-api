@@ -1,0 +1,22 @@
+[Unit]
+Description=Go Ollama API Server
+After=network.target
+
+[Service]
+Type=simple
+User=go-ollama-api
+Group=go-ollama-api
+ExecStart=/usr/bin/go-ollama-api
+Restart=always
+RestartSec=3
+Environment=PORT=8080
+Environment=OLLAMA_URL=http://127.0.0.1:11434
+
+# Security settings
+NoNewPrivileges=yes
+PrivateTmp=yes
+ProtectSystem=full
+ProtectHome=yes
+
+[Install]
+WantedBy=multi-user.target
