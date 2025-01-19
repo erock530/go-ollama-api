@@ -135,35 +135,85 @@ The interactive CLI starts automatically with the server. Available commands:
 
 ### Health Check
 
-```http
-GET /health?apikey=<your-api-key>
-```
+```bash
+# Check API health
+curl "http://localhost:8081/health?apikey=your-api-key"
 
-Response:
-```json
+# Example successful response:
 {
     "status": "API is healthy",
     "timestamp": "2024-02-20T10:00:00Z"
+}
+
+# Example error response (invalid API key):
+{
+    "error": "Invalid API key"
 }
 ```
 
 ### Generate Text
 
-```http
-POST /generate
-Content-Type: application/json
-
-{
+```bash
+# Basic text generation
+curl -X POST http://localhost:8081/generate \
+  -H "Content-Type: application/json" \
+  -d '{
     "apikey": "your-api-key",
     "model": "llama2",
     "prompt": "Hello, how are you?",
     "stream": false,
     "images": [],
     "raw": false
+  }'
+
+# Using llava model with images
+curl -X POST http://localhost:8081/generate \
+  -H "Content-Type: application/json" \
+  -d '{
+    "apikey": "your-api-key",
+    "model": "llava:34b",
+    "prompt": "What do you see in this image?",
+    "stream": false,
+    "images": ["base64-encoded-image-data"],
+    "raw": false
+  }'
+
+# Streaming response
+curl -X POST http://localhost:8081/generate \
+  -H "Content-Type: application/json" \
+  -d '{
+    "apikey": "your-api-key",
+    "model": "llama2",
+    "prompt": "Write a long story about a space adventure",
+    "stream": true,
+    "images": [],
+    "raw": false
+  }'
+
+# Example successful response:
+{
+    "response": "I'm doing well, thank you for asking! How can I help you today?"
+}
+
+# Example error responses:
+
+# Invalid API key:
+{
+    "error": "Invalid API key"
+}
+
+# Rate limit exceeded:
+{
+    "error": "Rate limit exceeded. Try again later."
+}
+
+# Model not found:
+{
+    "error": "model 'nonexistent-model' not found"
 }
 ```
 
-Response: Proxied response from Ollama server
+Note: Replace `localhost:8081` with your server's address and port, and `your-api-key` with a valid API key generated using the CLI commands.
 
 ## Rate Limiting
 

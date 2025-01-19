@@ -2,6 +2,7 @@ package cli
 
 import (
 	"crypto/rand"
+	"database/sql"
 	"encoding/hex"
 	"fmt"
 	"log"
@@ -120,7 +121,8 @@ func (c *CLI) listKeys() {
 	fmt.Println("\nAPI Keys:")
 	fmt.Println("----------------------------------------")
 	for rows.Next() {
-		var key, description string
+		var key string
+		var description sql.NullString
 		var createdAt, lastUsed string
 		var tokens, rateLimit int
 		var active bool
@@ -134,8 +136,8 @@ func (c *CLI) listKeys() {
 		fmt.Printf("Tokens: %d\n", tokens)
 		fmt.Printf("Rate Limit: %d\n", rateLimit)
 		fmt.Printf("Active: %v\n", active)
-		if description != "" {
-			fmt.Printf("Description: %s\n", description)
+		if description.Valid {
+			fmt.Printf("Description: %s\n", description.String)
 		}
 		fmt.Println("----------------------------------------")
 	}

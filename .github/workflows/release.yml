@@ -21,7 +21,7 @@ jobs:
       - name: Install dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y build-essential debhelper devscripts rpm sqlite3 libsqlite3-dev
+          sudo apt-get install -y build-essential debhelper devscripts rpm sqlite3 libsqlite3-dev golang-1.21
 
       - name: Set version
         id: version
