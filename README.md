@@ -249,10 +249,10 @@ go test -race -coverprofile=coverage.out -covermode=atomic ./...
 The project uses GitHub Actions for continuous integration:
 - Runs tests on every push and pull request to main branch
 - Includes race condition detection
-- Generates and uploads test coverage reports to Codecov
+- Generates and displays test coverage reports
 - Tests run on Ubuntu with Go 1.21 and SQLite dependencies
 
-You can view the latest test results and coverage reports in the GitHub Actions tab.
+You can view the latest test results and coverage reports in the GitHub Actions tab under the test workflow.
 
 ### Test Coverage
 

@@ -25,16 +25,9 @@ jobs:
         sudo apt-get update
         sudo apt-get install -y sqlite3 libsqlite3-dev
 
-    - name: Run tests
-      run: go test -v ./...
-
     - name: Run tests with coverage
-      run: go test -race -coverprofile=coverage.out -covermode=atomic ./...
-
-    - name: Upload coverage to Codecov
-      uses: codecov/codecov-action@v3
-      with:
-        files: ./coverage.out
-        flags: unittests
-        name: codecov-umbrella
-        fail_ci_if_error: true
+      run: |
+        go test -v -race -coverprofile=coverage.out -covermode=atomic ./...
+        go tool cover -func=coverage.out
+        echo "Total test coverage:"
+        go tool cover -func=coverage.out | grep total | awk '{print $3}'
