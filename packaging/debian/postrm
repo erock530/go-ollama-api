@@ -1,0 +1,24 @@
+#!/bin/sh
+set -e
+
+if [ "$1" = "purge" ]; then
+    # Remove user and group
+    if getent passwd go-ollama-api >/dev/null; then
+        deluser --quiet --system go-ollama-api || true
+    fi
+    if getent group go-ollama-api >/dev/null; then
+        delgroup --quiet --system go-ollama-api || true
+    fi
+
+    # Remove data directory
+    rm -rf /var/lib/go-ollama-api
+fi
+
+# Reload systemd
+if [ -d /run/systemd/system ]; then
+    systemctl daemon-reload || true
+fi
+
+#DEBHELPER#
+
+exit 0

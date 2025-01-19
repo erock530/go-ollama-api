@@ -12,9 +12,36 @@ A Go-based API proxy for Ollama with API key management, rate limiting, and webh
 
 ## Installation
 
+### From Source
 ```bash
 go get github.com/erock530/go-ollama-api
 ```
+
+### Package Installation
+
+#### RPM-based systems (RHEL, CentOS, Fedora)
+```bash
+sudo rpm -i go-ollama-api-<version>.rpm
+sudo systemctl enable --now go-ollama-api
+```
+
+#### Debian-based systems (Ubuntu, Debian)
+```bash
+sudo dpkg -i go-ollama-api_<version>_amd64.deb
+sudo systemctl enable --now go-ollama-api
+```
+
+## Versioning
+
+This project uses semantic versioning. Release versions are in the format `vMAJOR.MINOR.PATCH`:
+- MAJOR version for incompatible API changes
+- MINOR version for new functionality in a backwards compatible manner
+- PATCH version for backwards compatible bug fixes
+
+Each release includes:
+- Binary packages (RPM and DEB)
+- Systemd service configuration
+- Version information embedded in the binary
 
 ## Building and Running
 
@@ -247,6 +274,26 @@ The test suite includes:
   - Rate limit state management
 
 Each test ensures proper error handling, response codes, and payload validation.
+
+## Service Management
+
+The packages install and configure a systemd service:
+
+```bash
+# Start the service
+sudo systemctl start go-ollama-api
+
+# Stop the service
+sudo systemctl stop go-ollama-api
+
+# Check service status
+sudo systemctl status go-ollama-api
+
+# View logs
+sudo journalctl -u go-ollama-api
+```
+
+Default configuration can be modified in `/etc/go-ollama-api/config.yaml`
 
 ## License
 

@@ -1,0 +1,10 @@
+go-ollama-api (1.0.0-1) unstable; urgency=medium
+
+  * Initial release.
+  * Features API key management with rate limiting
+  * SQLite database for persistent storage
+  * Webhook notifications for API usage
+  * Interactive CLI for administration
+  * Graceful shutdown handling
+
+ -- Eric <erock530@github.com>  Wed, 21 Feb 2024 12:00:00 +0000

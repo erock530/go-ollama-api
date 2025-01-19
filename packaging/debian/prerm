@@ -1,0 +1,11 @@
+#!/bin/sh
+set -e
+
+if [ -d /run/systemd/system ] && [ "$1" = remove ]; then
+    systemctl --no-reload disable go-ollama-api.service || true
+    systemctl stop go-ollama-api.service || true
+fi
+
+#DEBHELPER#
+
+exit 0

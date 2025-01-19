@@ -1,0 +1,33 @@
+#!/bin/sh
+set -e
+
+# Create user and group if they don't exist
+if ! getent group go-ollama-api >/dev/null; then
+    addgroup --system go-ollama-api
+fi
+if ! getent passwd go-ollama-api >/dev/null; then
+    adduser --system --ingroup go-ollama-api --no-create-home --shell /sbin/nologin go-ollama-api
+fi
+
+# Set up directories and permissions
+mkdir -p /var/lib/go-ollama-api
+chown go-ollama-api:go-ollama-api /var/lib/go-ollama-api
+chmod 750 /var/lib/go-ollama-api
+
+# Reload systemd
+if [ -d /run/systemd/system ]; then
+    systemctl daemon-reload
+fi
+
+# Start service if it was running before upgrade
+if [ "$1" = "configure" ] && [ -z "$2" ]; then
+    # This is a new installation
+    systemctl enable go-ollama-api.service || true
+elif [ "$1" = "configure" ] && dpkg --compare-versions "$2" lt "1.0.0"; then
+    # This is an upgrade
+    systemctl try-restart go-ollama-api.service || true
+fi
+
+#DEBHELPER#
+
+exit 0
