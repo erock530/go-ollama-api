@@ -1,6 +1,9 @@
 package models
 
-import "time"
+import (
+	"database/sql"
+	"time"
+)
 
 // APIKey represents an API key in the database
 type APIKey struct {
@@ -10,7 +13,7 @@ type APIKey struct {
 	Tokens      int
 	RateLimit   int
 	Active      bool
-	Description string
+	Description sql.NullString
 }
 
 // Webhook represents a webhook configuration

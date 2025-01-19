@@ -47,16 +47,24 @@ func rateLimitMiddleware(next http.Handler, db db.DBInterface) http.Handler {
 			return
 		}
 
+		// Read the entire body
+		body, err := io.ReadAll(r.Body)
+		if err != nil {
+			http.Error(w, "Error reading request body", http.StatusBadRequest)
+			return
+		}
+
+		// Parse the request to get the API key
 		var req struct {
 			APIKey string `json:"apikey"`
 		}
-
-		if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+		if err := json.Unmarshal(body, &req); err != nil {
 			http.Error(w, "Invalid request body", http.StatusBadRequest)
 			return
 		}
-		// Reset body for next handler
-		r.Body = io.NopCloser(bytes.NewBuffer([]byte(`{"apikey":"` + req.APIKey + `"}`)))
+
+		// Reset the body with the original content
+		r.Body = io.NopCloser(bytes.NewBuffer(body))
 
 		if req.APIKey == "" {
 			http.Error(w, "API key is required", http.StatusBadRequest)
